@@ -6,11 +6,13 @@ on:
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 jobs:
   retag-and-push:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     
     steps:
     - name: Checkout code
@@ -76,3 +78,37 @@ jobs:
         echo "Successfully retagged and pushed:"
         echo "  $ECR_REGISTRY/demo-app:$VERSION"
         echo "  $ECR_REGISTRY/demo-app:latest"
+
+  deploy:
+    needs: retag-and-push
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout helm-demo-app repository
+      uses: actions/checkout@v4
+      with:
+        repository: ramilano/helm-demo-app
+        ref: main
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: helm-demo-app
+
+    - name: Update Chart.yaml appVersion
+      run: |
+        cd helm-demo-app
+        APP_VERSION="${{ needs.retag-and-push.outputs.version }}"
+        
+        # Update the appVersion in Chart.yaml
+        sed -i "s/^appVersion: .*/appVersion: $APP_VERSION/" Chart.yaml
+        
+        echo "Updated appVersion to: $APP_VERSION"
+        cat Chart.yaml | grep "appVersion:"
+
+    - name: Commit and push changes
+      run: |
+        cd helm-demo-app
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        
+        git add Chart.yaml
+        git commit -m "Update appVersion to ${{ needs.retag-and-push.outputs.version }}"
+        git push origin main
