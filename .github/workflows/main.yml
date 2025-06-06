@@ -112,3 +112,5 @@ jobs:
         git add Chart.yaml
         git commit -m "Update appVersion to ${{ needs.retag-and-push.outputs.version }}"
         git push origin main
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
