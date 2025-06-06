@@ -80,9 +80,8 @@ jobs:
       with:
         repository: ramilano/helm-demo-app
         ref: develop
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_TOKEN }}
         path: helm-demo-app
-        fetch-depth: 0
 
     - name: Update Chart.yaml appVersion
       run: |
@@ -99,11 +98,11 @@ jobs:
       run: |
         cd helm-demo-app
         git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
+        git config user.email "<>"
         
         git add Chart.yaml
         git commit -m "Update appVersion to ${{ needs.build-and-push.outputs.image_tag }}"
-        git push origin develop
+        git push
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         
