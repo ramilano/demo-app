@@ -20,7 +20,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::234401909199:role/github-actions-role
-        aws-region: us-east-1
+        aws-region: eu-west-1
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -43,7 +43,7 @@ jobs:
         echo "Looking for RC image: $ECR_REGISTRY/demo-app:$RC_TAG"
         
         # Check if the RC image exists
-        if aws ecr describe-images --repository-name demo-app --image-ids imageTag=$RC_TAG --region us-east-1 > /dev/null 2>&1; then
+        if aws ecr describe-images --repository-name demo-app --image-ids imageTag=$RC_TAG --region eu-west-1 > /dev/null 2>&1; then
           echo "rc_tag=$RC_TAG" >> $GITHUB_OUTPUT
           echo "rc_exists=true" >> $GITHUB_OUTPUT
           echo "Found RC image: $RC_TAG"
