@@ -4,7 +4,7 @@ plugins {
     id 'java'
 }
 
-group = 'com.opsfleet'
+group = 'com.demo'
 version = '1.0.0'
 
 java {
